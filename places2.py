@@ -2,6 +2,7 @@ import random
 import torch
 from PIL import Image
 from glob import glob
+import os
 
 
 class Places2(torch.utils.data.Dataset):
@@ -13,19 +14,19 @@ class Places2(torch.utils.data.Dataset):
 
         # use about 8M images in the challenge dataset
         if split == 'train':
-            self.paths = glob('{:s}/data_large/**/*.jpg'.format(img_root),
+            self.paths = glob('{:s}/*.jpg'.format(img_root),
                               recursive=True)
         else:
-            self.paths = glob('{:s}/{:s}_large/*'.format(img_root, split))
+            self.paths = glob('{:s}/*'.format(img_root, split))
 
-        self.mask_paths = glob('{:s}/*.jpg'.format(mask_root))
-        self.N_mask = len(self.mask_paths)
+        self.img_root = img_root
+        self.mask_root = mask_root
 
     def __getitem__(self, index):
-        gt_img = Image.open(self.paths[index])
+        gt_img = Image.open(os.path.join(img_root, f"{index}.jpg"))
         gt_img = self.img_transform(gt_img.convert('RGB'))
 
-        mask = Image.open(self.mask_paths[random.randint(0, self.N_mask - 1)])
+        mask = Image.open(os.path.join(mask_root, f"{index}.jpg"))
         mask = self.mask_transform(mask.convert('RGB'))
         return gt_img * mask, mask, gt_img
 
