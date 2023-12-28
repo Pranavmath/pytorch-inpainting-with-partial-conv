@@ -23,10 +23,10 @@ class Places2(torch.utils.data.Dataset):
         self.mask_root = mask_root
 
     def __getitem__(self, index):
-        gt_img = Image.open(os.path.join(img_root, f"{index}.jpg"))
+        gt_img = Image.open(os.path.join(self.img_root, f"{index}.jpg"))
         gt_img = self.img_transform(gt_img.convert('RGB'))
 
-        mask = Image.open(os.path.join(mask_root, f"{index}.jpg"))
+        mask = Image.open(os.path.join(self.mask_root, f"{index}.jpg"))
         mask = self.mask_transform(mask.convert('RGB'))
         return gt_img * mask, mask, gt_img
 
