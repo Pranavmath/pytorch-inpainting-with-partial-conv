@@ -50,13 +50,15 @@ parser.add_argument('--lr_finetune', type=float, default=5e-5)
 parser.add_argument('--max_iter', type=int, default=1000000)
 parser.add_argument('--batch_size', type=int, default=16)
 parser.add_argument('--n_threads', type=int, default=16)
-parser.add_argument('--save_model_interval', type=int, default=50000)
+parser.add_argument('--save_model_interval', type=int, default=10000)
 parser.add_argument('--vis_interval', type=int, default=5000)
 parser.add_argument('--log_interval', type=int, default=10)
 parser.add_argument('--image_size', type=int, default=256)
 parser.add_argument('--resume', type=str)
 parser.add_argument('--finetune', action='store_true')
 args = parser.parse_args()
+
+MODEL_SAVE_PATH = "INSERT PATH HERE"
 
 torch.backends.cudnn.benchmark = True
 device = torch.device('cuda')
@@ -85,6 +87,8 @@ iterator_train = iter(data.DataLoader(
     num_workers=args.n_threads))
 print(len(dataset_train))
 model = PConvUNet().to(device)
+
+model.load_state_dict(torch.load(MODEL_SAVE_PATH, map_location=device)["model"])
 
 if args.finetune:
     lr = args.lr_finetune
